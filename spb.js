@@ -33,6 +33,22 @@
         });
     }
 
+    // Review rail: arrow buttons scroll by one card, hide at the ends
+    document.querySelectorAll('[data-rail]').forEach(function (btn) {
+        var rail = document.getElementById(btn.dataset.rail);
+        if (!rail) return;
+        btn.addEventListener('click', function () {
+            var card = rail.firstElementChild;
+            var step = card ? card.getBoundingClientRect().width + 14 : 320;
+            rail.scrollBy({ left: step * Number(btn.dataset.dir), behavior: 'smooth' });
+        });
+        var upd = function () {
+            var end = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4;
+            btn.classList.toggle('is-hidden', btn.dataset.dir === '-1' ? rail.scrollLeft < 4 : end);
+        };
+        rail.addEventListener('scroll', upd, { passive: true }); window.addEventListener('resize', upd); upd();
+    });
+
     // Reveal on scroll
     var items = document.querySelectorAll('.reveal');
     if ('IntersectionObserver' in window) {
